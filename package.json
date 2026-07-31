@@ -1,7 +1,29 @@
 {
     "name": "adonisjs-adminizer-provider",
-    "version": "0.0.1",
+    "version": "1.0.0",
+    "description": "AdonisJS provider for Adminizer — a full-featured admin panel with a Lucid ORM adapter",
     "type": "module",
+    "license": "MIT",
+    "author": "Dmitriy Tihonov (https://github.com/markusweblance)",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/adminization/adonisjs-adminizer-provider"
+    },
+    "bugs": {
+        "url": "https://github.com/adminization/adonisjs-adminizer-provider/issues"
+    },
+    "homepage": "https://github.com/adminization/adonisjs-adminizer-provider#readme",
+    "keywords": [
+        "adonisjs",
+        "adonisjs-provider",
+        "adonisjs-admin",
+        "adonisjs-adminpanel",
+        "adminizer",
+        "admin",
+        "admin-panel",
+        "lucid",
+        "crud"
+    ],
     "scripts": {
         "copy:templates": "copyfiles \"stubs/**/*.stub\" --up=\"1\" build/stubs",
         "build": "tsc && npm run copy:templates"
@@ -14,7 +36,11 @@
         "adminizer": "alpha"
     },
     "devDependencies": {
-        "copyfiles": "^2.4.1"
+        "@adonisjs/core": "^8.0.0",
+        "@adonisjs/lucid": "^22.0.0",
+        "@adonisjs/tsconfig": "^1.4.1",
+        "copyfiles": "^2.4.1",
+        "typescript": "^5.9.2"
     },
     "peerDependencies": {
         "@adonisjs/core": "^8.0.0",
