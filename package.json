@@ -33,17 +33,14 @@
         "./provider": "./providers/adminizer_provider.js"
     },
     "dependencies": {
+        "@types/node": "^26.1.2",
         "adminizer": "alpha"
     },
     "devDependencies": {
-        "@adonisjs/core": "^8.0.0",
+        "@adonisjs/core": "^7.3.3",
         "@adonisjs/lucid": "^22.0.0",
         "@adonisjs/tsconfig": "^1.4.1",
         "copyfiles": "^2.4.1",
         "typescript": "^5.9.2"
-    },
-    "peerDependencies": {
-        "@adonisjs/core": "^8.0.0",
-        "@adonisjs/lucid": "^22.0.0"
     }
 }
