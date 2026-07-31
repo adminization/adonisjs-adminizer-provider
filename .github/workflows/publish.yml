@@ -1,0 +1,82 @@
+name: Publish Package to npmjs
+
+on:
+  push:
+    branches:
+      - master
+      - main
+      - next
+      - alpha
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm install --force && npm run build
+
+      # The published manifest points at ./build and whitelists the compiled files
+      - run: cp ./package.build.json ./package.json
+
+      # Resolve version: different strategy per branch
+      - name: Resolve version (master/main — patch bump)
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+        run: |
+          set -x
+          PACKAGE=$(jq -r '.name' package.json)
+          VERNPM=$(curl -s https://registry.npmjs.org/$PACKAGE | jq -r '.["dist-tags"].latest' | awk -F. -v OFS=. '{$NF += 1 ; print}')
+          VERLOC=$(jq -r '.version' package.json)
+          if [[ "$VERNPM" == "null" ]]; then
+              VEROUT=$VERLOC
+          else
+              VEROUT=$(printf "$VERNPM\n$VERLOC\n" | sort -V -r | awk 'NR==1 {print; exit}')
+          fi
+          jq -r --arg VER "$VEROUT" '.version = $VER' package.json > /tmp/package.json && mv /tmp/package.json ./package.json
+
+      - name: Resolve version (next/alpha — prerelease build bump)
+        if: github.ref == 'refs/heads/next' || github.ref == 'refs/heads/alpha'
+        run: |
+          set -x
+          BRANCH=${GITHUB_REF##*/}
+          PACKAGE=$(jq -r '.name' package.json)
+          VERLOC=$(jq -r '.version' package.json)
+          VERNPMRAW=$(curl -s https://registry.npmjs.org/$PACKAGE | jq -r '.["dist-tags"].'$BRANCH'')
+          BUILD_VERSION=0
+          if [[ "$VERNPMRAW" == "null" ]]; then
+              VEROUT=$VERLOC
+          else
+              VERNPM=$(echo $VERNPMRAW | cut -d'-' -f1)
+              BUILD_VERSION=$(echo $VERNPMRAW | awk -F '[.-]' '{print $5+1}')
+              VEROUT=$(printf "$VERNPM\n$VERLOC\n" | sort -V -r | awk 'NR==1 {print; exit}')
+          fi
+          jq -r --arg VER "${VEROUT}-build.${BUILD_VERSION}" '.version = $VER' package.json > /tmp/package.json && mv /tmp/package.json ./package.json
+
+      # Publish with OIDC provenance
+      - name: Publish (master/main)
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish (next)
+        if: github.ref == 'refs/heads/next'
+        run: npm publish --provenance --access public --tag next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish (alpha)
+        if: github.ref == 'refs/heads/alpha'
+        run: npm publish --provenance --access public --tag alpha
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

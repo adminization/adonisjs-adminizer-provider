@@ -1,0 +1,35 @@
+name: Publish Commit Build to npmjs
+
+on:
+  push:
+    branches:
+      - commit
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm install --force && npm run build
+
+      - run: cp ./package.build.json ./package.json
+
+      # resolve version with short commit hash
+      - run: |
+          set -x
+          VERLOC=$(jq -r '.version' package.json)
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+
+          VEROUT="${VERLOC}-commit.${COMMIT_HASH}"
+          jq -r --arg VER "$VEROUT" '.version = $VER' package.json > /tmp/package.json && mv /tmp/package.json ./package.json
+
+      - run: npm publish --access public --tag commit
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
