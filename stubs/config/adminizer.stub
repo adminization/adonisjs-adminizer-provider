@@ -3,7 +3,7 @@
     to: app.makePath('config/adminizer.ts')
   })
 }}}
-import {defineConfig} from 'adonisjs-adminizer'
+import {defineConfig} from 'adonisjs-adminizer-provider'
 import AdminizerUser from '#models/adminizer/adminizer_user'
 import AdminizerGroup from '#models/adminizer/adminizer_group'
 import AdminizerFilter from "#models/adminizer/adminizer_filter";

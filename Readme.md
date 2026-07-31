@@ -1,6 +1,6 @@
 # Adminizer — Admin Panel for AdonisJS
 
-**adonisjs-adminizer** is a package for AdonisJS 8+ that allows you to quickly add a fully-featured administrative panel to your application. Supports user and group management, media files, change history, notifications, filters, and multilingual support.
+**adonisjs-adminizer-provider** is a package for AdonisJS 8+ that allows you to quickly add a fully-featured administrative panel to your application. Supports user and group management, media files, change history, notifications, filters, and multilingual support.
 
 ## Features
 
@@ -30,7 +30,7 @@
 ### Step 1: Install the package
 
 ```bash
-npm install adonisjs-adminizer
+npm install adonisjs-adminizer-provider
 ```
 
 ### Step 2: Configure the package
@@ -44,7 +44,7 @@ Run the configuration command, which automatically:
 - Creates the configuration file `config/adminizer.ts`
 
 ```bash
-node ace configure adonisjs-adminizer
+node ace configure adonisjs-adminizer-provider
 ```
 
 ### Step 3: Run migrations
@@ -505,11 +505,11 @@ For more detailed information about modules, see the [documentation](https://git
 
 **<strong style="color: red;">Important!</strong>**
 
-Your provider must be placed below adonisjs-adminizer in `adonisrc.ts`:
+Your provider must be placed below adonisjs-adminizer-provider in `adonisrc.ts`:
 
 ```typescript
   {
-    file: () => import('adonisjs-adminizer/provider'),
+    file: () => import('adonisjs-adminizer-provider/provider'),
         environment: ['web'],
 },
 {

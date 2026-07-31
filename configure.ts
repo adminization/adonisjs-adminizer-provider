@@ -8,7 +8,7 @@ export async function configure(command: Configure) {
 
     await codemods.updateRcFile((rcFile) => {
         rcFile.addProvider(
-            'adonisjs-adminizer/provider',
+            'adonisjs-adminizer-provider/provider',
             ['web']
         )
     })
