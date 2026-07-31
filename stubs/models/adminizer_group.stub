@@ -1,0 +1,45 @@
+{{{
+  exports({
+    to: app.makePath('app/models/adminizer/adminizer_group.ts')
+  })
+}}}
+import { DateTime } from 'luxon'
+import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
+import type { ManyToMany } from '@adonisjs/lucid/types/relations'
+import AdminizerUser from './adminizer_user.js'
+
+export default class AdminizerGroup extends BaseModel {
+  static table = 'adminizer_groups'
+
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column()
+  declare name: string
+
+  @column()
+  declare description: string | null
+
+  @column({
+    prepare: (value: any) => (value === null || value === undefined ? value : JSON.stringify(value)),
+    consume: (value: any) => (typeof value === 'string' ? JSON.parse(value) : value),
+  })
+  @column()
+  declare tokens: Record<string, any> | null
+
+  @manyToMany(() => AdminizerUser, {
+      pivotTable: 'adminizer_user_groups',
+      localKey: 'id',
+      pivotForeignKey: 'group_id',
+      relatedKey: 'id',
+      pivotRelatedForeignKey: 'user_id',
+      pivotTimestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+    })
+    declare users: ManyToMany<typeof AdminizerUser>
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}

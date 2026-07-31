@@ -1,0 +1,59 @@
+{{{
+  exports({
+    to: app.makePath('app/models/adminizer/adminizer_history_action.ts')
+  })
+}}}
+import { DateTime } from 'luxon'
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import AdminizerUser from './adminizer_user.js'
+
+export default class AdminizerHistoryAction extends BaseModel {
+  static table = 'adminizer_history_actions'
+
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column({ columnName: 'model_name' })
+  declare modelName: string
+
+  @column({ columnName: 'model_id' })
+  declare modelId: string
+
+  @column()
+  declare action: string
+
+  @column({ columnName: 'user_id' })
+  declare userId: number | null
+
+  @belongsTo(() => AdminizerUser, {
+    foreignKey: 'userId',
+  })
+  declare user: BelongsTo<typeof AdminizerUser>
+
+  @column({
+    prepare: (value: any) => (value === null || value === undefined ? value : JSON.stringify(value)),
+    consume: (value: any) => (typeof value === 'string' ? JSON.parse(value) : value),
+  })
+  @column()
+  declare data: Record<string, any> | null
+
+  @column({
+    prepare: (value: any) => (value === null || value === undefined ? value : JSON.stringify(value)),
+    consume: (value: any) => (typeof value === 'string' ? JSON.parse(value) : value),
+  })
+  @column()
+  declare diff: Record<string, any> | null
+
+  @column({ columnName: 'is_current' })
+  declare isCurrent: boolean
+
+  @column()
+  declare preview: boolean
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}

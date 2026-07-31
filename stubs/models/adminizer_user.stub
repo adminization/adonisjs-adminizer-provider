@@ -1,0 +1,78 @@
+{{{
+  exports({
+    to: app.makePath('app/models/adminizer/adminizer_user.ts')
+  })
+}}}
+import { DateTime } from 'luxon'
+import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
+import type { ManyToMany } from '@adonisjs/lucid/types/relations'
+import AdminizerGroup from './adminizer_group.js'
+
+export default class AdminizerUser extends BaseModel {
+  static table = 'adminizer_users'
+
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column()
+  declare login: string
+
+  @column()
+  declare fullName: string
+
+  @column()
+  declare email: string | null
+
+  @column()
+  declare passwordHashed: string
+
+  @column({ columnName: 'api_key' })
+  declare apiKey: string | null
+
+  @column()
+  declare avatar: string | null
+
+  @column({
+    prepare: (value: any) => (value === null || value === undefined ? value : JSON.stringify(value)),
+    consume: (value: any) => (typeof value === 'string' ? JSON.parse(value) : value),
+  })
+  @column()
+  declare widgets: Record<string, any> | null
+
+  @column()
+  declare locale: string | null
+
+  @column()
+  declare timezone: string | null
+
+  @column.dateTime()
+  declare expires: DateTime | null
+
+  @column()
+  declare isDeleted: boolean
+
+  @column()
+  declare isActive: boolean
+
+  @column()
+  declare isAdministrator: boolean
+
+  @column()
+  declare isConfirmed: boolean
+
+  @manyToMany(() => AdminizerGroup, {
+      pivotTable: 'adminizer_user_groups',
+      localKey: 'id',
+      pivotForeignKey: 'user_id',
+      relatedKey: 'id',
+      pivotRelatedForeignKey: 'group_id',
+      pivotTimestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+    })
+    declare groups: ManyToMany<typeof AdminizerGroup>
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}

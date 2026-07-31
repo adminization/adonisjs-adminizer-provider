@@ -1,0 +1,36 @@
+{
+    "name": "adonisjs-adminizer-provider",
+    "version": "0.0.1",
+    "main": "./build/index.js",
+    "type": "module",
+    "files": [
+        "build/apps",
+        "build/lib",
+        "build/middleware",
+        "build/src",
+        "build/stubs",
+        "build/providers",
+        "build/index.d.ts",
+        "build/index.js",
+        "build/configure.d.ts",
+        "build/configure.js"
+    ],
+    "scripts": {
+        "copy:templates": "copyfiles \"stubs/**/*.stub\" --up=\"1\" build/stubs",
+        "build": "tsc && npm run copy:templates"
+    },
+    "exports": {
+        ".": "./build/index.js",
+        "./provider": "./build/providers/adminizer_provider.js"
+    },
+    "dependencies": {
+        "adminizer": "alpha"
+    },
+    "devDependencies": {
+        "copyfiles": "^2.4.1"
+    },
+    "peerDependencies": {
+        "@adonisjs/core": "^8.0.0",
+        "@adonisjs/lucid": "^22.0.0"
+    }
+}

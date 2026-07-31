@@ -1,0 +1,36 @@
+{{{
+  exports({
+    to: app.makePath('app/models/adminizer/adminizer_user_notification.ts')
+  })
+}}}
+import { DateTime } from 'luxon'
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import AdminizerNotification from './adminizer_notification.js'
+
+export default class AdminizerUserNotification extends BaseModel {
+  static table = 'adminizer_user_notifications'
+
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column()
+  declare userId: number
+
+  @column({ columnName: 'notification_id' })
+  declare notificationId: number
+
+  @belongsTo(() => AdminizerNotification, {
+    foreignKey: 'notificationId',
+  })
+  declare notification: BelongsTo<typeof AdminizerNotification>
+
+  @column()
+  declare read: boolean
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}

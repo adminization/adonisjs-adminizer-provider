@@ -1,0 +1,37 @@
+{{{
+  exports({
+    to: app.makePath('database/migrations', `${new Date().getTime()}_create_adminizer_media_associations_table.ts`)
+  })
+}}}
+import { BaseSchema } from '@adonisjs/lucid/schema'
+
+export default class extends BaseSchema {
+  protected tableName = 'adminizer_media_associations'
+
+  async up() {
+    this.schema.createTable(this.tableName, (table) => {
+      table.increments('id').notNullable()
+
+      table.string('media_manager_id', 255).notNullable()
+      table.string('model', 255).notNullable()
+      table.string('model_id', 255).notNullable()
+      table.string('widget_name', 255).notNullable()
+      table.integer('sort_order').notNullable()
+
+      table
+        .integer('file_id')
+        .unsigned()
+        .notNullable()
+        .references('id')
+        .inTable('adminizer_media')
+        .onDelete('CASCADE')
+
+      table.timestamp('created_at').notNullable()
+      table.timestamp('updated_at').notNullable()
+    })
+  }
+
+  async down() {
+    this.schema.dropTable(this.tableName)
+  }
+}

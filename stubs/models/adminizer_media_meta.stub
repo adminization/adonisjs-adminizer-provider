@@ -1,0 +1,42 @@
+{{{
+  exports({
+    to: app.makePath('app/models/adminizer/adminizer_media_meta.ts')
+  })
+}}}
+import { DateTime } from 'luxon'
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import AdminizerMedia from './adminizer_media.js'
+
+export default class AdminizerMediaMeta extends BaseModel {
+  static table = 'adminizer_media_meta'
+
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column()
+  declare key: string
+
+  @column({
+    prepare: (value: any) => (value === null || value === undefined ? value : JSON.stringify(value)),
+    consume: (value: any) => (typeof value === 'string' ? JSON.parse(value) : value),
+  })
+  declare value: Record<string, any> | null
+
+  @column({ columnName: 'is_public' })
+  declare isPublic: boolean
+
+  @column({ columnName: 'parent_id' })
+  declare parentId: number
+
+  @belongsTo(() => AdminizerMedia, {
+    foreignKey: 'parentId',
+  })
+  declare parent: BelongsTo<typeof AdminizerMedia>
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}

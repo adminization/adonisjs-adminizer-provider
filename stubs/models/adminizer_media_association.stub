@@ -1,0 +1,45 @@
+{{{
+  exports({
+    to: app.makePath('app/models/adminizer/adminizer_media_association.ts')
+  })
+}}}
+import { DateTime } from 'luxon'
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import AdminizerMedia from './adminizer_media.js'
+
+export default class AdminizerMediaAssociation extends BaseModel {
+  static table = 'adminizer_media_associations'
+
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column({ columnName: 'media_manager_id' })
+  declare mediaManagerId: string
+
+  @column()
+  declare model: string
+
+  @column({ columnName: 'model_id' })
+  declare modelId: string
+
+  @column({ columnName: 'widget_name' })
+  declare widgetName: string
+
+  @column({ columnName: 'sort_order' })
+  declare sortOrder: number
+
+  @column({ columnName: 'file_id' })
+  declare fileId: number
+
+  @belongsTo(() => AdminizerMedia, {
+    foreignKey: 'fileId',
+  })
+  declare file: BelongsTo<typeof AdminizerMedia>
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}

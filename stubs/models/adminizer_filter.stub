@@ -1,0 +1,87 @@
+{{{
+  exports({
+    to: app.makePath('app/models/adminizer/adminizer_filter.ts')
+  })
+}}}
+import { randomUUID } from 'node:crypto'
+import { DateTime } from 'luxon'
+import { BaseModel, column, belongsTo, hasMany, beforeCreate } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import AdminizerUser from './adminizer_user.js'
+import AdminizerFilterColumn from './adminizer_filter_column.js'
+
+export default class AdminizerFilter extends BaseModel {
+  static table = 'adminizer_filters'
+
+  @column({ isPrimary: true })
+  declare id: string
+
+  @column()
+  declare name: string
+
+  @column()
+  declare description: string | null
+
+  @column()
+  declare icon: string | null
+
+  @column()
+  declare color: string | null
+
+  @column({ columnName: 'owner_id' })
+  declare ownerId: number
+
+  @belongsTo(() => AdminizerUser, {
+    foreignKey: 'ownerId',
+  })
+  declare owner: BelongsTo<typeof AdminizerUser>
+
+  @column({ columnName: 'model_name' })
+  declare modelName: string
+
+  @column({
+     prepare: (value: any) => (value === null || value === undefined ? value : JSON.stringify(value)),
+     consume: (value: any) => (typeof value === 'string' ? JSON.parse(value) : value),
+  })
+  @column()
+  declare conditions: Record<string, any> | null
+
+  @column({ columnName: 'group_ids' })
+  declare groupIds: number[] | null
+
+  @hasMany(() => AdminizerFilterColumn, {
+    foreignKey: 'filterId',
+  })
+  declare columns: HasMany<typeof AdminizerFilterColumn>
+
+  @column({ columnName: 'sort_field' })
+  declare sortField: string | null
+
+  @column({ columnName: 'sort_direction' })
+  declare sortDirection: string | null
+
+  @column()
+  declare version: number
+
+  @column()
+  declare visibility: string
+
+  @column({ columnName: 'api_enabled' })
+  declare apiEnabled: boolean
+
+  @column({ columnName: 'api_key', serializeAs: null })
+  declare apiKey: string | null
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+
+  @beforeCreate()
+  static assignId(filter: AdminizerFilter) {
+    if (!filter.id) {
+      filter.id = randomUUID()
+    }
+  }
+}

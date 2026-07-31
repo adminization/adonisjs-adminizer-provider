@@ -1,0 +1,46 @@
+{{{
+  exports({
+    to: app.makePath('app/models/adminizer/adminizer_notification.ts')
+  })
+}}}
+import { DateTime } from 'luxon'
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
+import AdminizerUserNotification from './adminizer_user_notification.js'
+
+export default class AdminizerNotification extends BaseModel {
+  static table = 'adminizer_notifications'
+
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column()
+  declare title: string
+
+  @column()
+  declare message: string
+
+  @column()
+  declare channel: string
+
+  @column({ columnName: 'notification_class' })
+  declare notificationClass: string
+
+  @column({
+    prepare: (value: any) => (value === null || value === undefined ? value : JSON.stringify(value)),
+    consume: (value: any) => (typeof value === 'string' ? JSON.parse(value) : value),
+  })
+  @column()
+  declare metadata: Record<string, any> | null
+
+  @hasMany(() => AdminizerUserNotification, {
+    foreignKey: 'notificationId',
+  })
+  declare userNotifications: HasMany<typeof AdminizerUserNotification>
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}

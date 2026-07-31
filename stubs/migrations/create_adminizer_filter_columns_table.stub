@@ -1,0 +1,27 @@
+{{{
+  exports({
+    to: app.makePath('database/migrations', `${new Date().getTime()}_create_adminizer_filter_columns_table.ts`)
+  })
+}}}
+
+import { BaseSchema } from '@adonisjs/lucid/schema'
+
+export default class extends BaseSchema {
+  protected tableName = 'adminizer_filter_columns'
+
+  async up() {
+    this.schema.createTable(this.tableName, (table) => {
+      table.increments('id').notNullable()
+      table.uuid('filter_id').notNullable().references('id').inTable('adminizer_filters').onDelete('CASCADE')
+      table.string('field_name', 100).notNullable()
+      table.integer('order').notNullable().defaultTo(0)
+
+      table.timestamp('created_at').notNullable()
+      table.timestamp('updated_at').notNullable()
+    })
+  }
+
+  async down() {
+    this.schema.dropTable(this.tableName)
+  }
+}

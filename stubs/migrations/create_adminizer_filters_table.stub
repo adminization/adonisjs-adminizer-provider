@@ -1,0 +1,38 @@
+{{{
+  exports({
+    to: app.makePath('database/migrations', `${new Date().getTime()}_create_adminizer_filters_table.ts`)
+  })
+}}}
+
+import { BaseSchema } from '@adonisjs/lucid/schema'
+
+export default class extends BaseSchema {
+  protected tableName = 'adminizer_filters'
+
+  async up() {
+    this.schema.createTable(this.tableName, (table) => {
+      table.uuid('id').notNullable().primary()
+      table.string('name', 100).notNullable()
+      table.string('description', 255).nullable()
+      table.string('icon', 50).nullable()
+      table.string('color', 50).nullable()
+      table.integer('owner_id').unsigned().notNullable().references('id').inTable('adminizer_users').onDelete('CASCADE')
+      table.string('model_name', 100).notNullable()
+      table.jsonb('conditions').nullable()
+      table.jsonb('group_ids').nullable()
+      table.string('sort_field', 100).nullable()
+      table.string('sort_direction', 4).nullable()
+      table.integer('version').notNullable().defaultTo(1)
+      table.string('visibility', 20).notNullable()
+      table.boolean('api_enabled').notNullable().defaultTo(false)
+      table.string('api_key', 255).nullable().unique()
+
+      table.timestamp('created_at').notNullable()
+      table.timestamp('updated_at').notNullable()
+    })
+  }
+
+  async down() {
+    this.schema.dropTable(this.tableName)
+  }
+}
