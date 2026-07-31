@@ -1,6 +1,6 @@
 # Adminizer — Admin Panel for AdonisJS
 
-**adonisjs-adminizer-provider** is a package for AdonisJS 8+ that allows you to quickly add a fully-featured administrative panel to your application. Supports user and group management, media files, change history, notifications, filters, and multilingual support.
+**adonisjs-adminizer-provider** is a package for AdonisJS 7+ that allows you to quickly add a fully-featured administrative panel to your application. Supports user and group management, media files, change history, notifications, filters, and multilingual support.
 
 ## Features
 
@@ -18,8 +18,8 @@
 
 ## Requirements
 
-- Node.js 18+
-- AdonisJS ^8.0.0
+- Node.js 24+
+- AdonisJS ^7.0.0
 - Lucid ORM ^22.0.0
 - SQLite / PostgreSQL / MySQL
 
